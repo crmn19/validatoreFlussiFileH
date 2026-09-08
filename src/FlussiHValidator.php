@@ -267,10 +267,10 @@ final class FlussiHValidator
         $v = static function (string $key) use ($r): string { return trim((string) $r[$key]); };
         $isClosing = $v('progressivo_riga') === '99';
         $type = $v('tipo_assistenza');
-        $this->expect($result, 'H2', $line, $f['tipo_assistenza'], in_array($type, ['RIA', 'RSD', 'CTD', 'SME', 'ANZ', 'NNA'], true), 'TAEE', 'Tipo assistenza non ammesso.');
+        $this->expect($result, 'H2', $line, $f['tipo_assistenza'], in_array($type, ['RIA', 'RSD', 'CTD', 'SME', 'ANZ', 'NNA', 'ABA'], true), 'TAEE', 'Tipo assistenza non ammesso.');
 
         if ($v('menomazione') !== '') {
-            $this->expect($result, 'H2', $line, $f['menomazione'], in_array($type, ['RIA', 'NNA'], true), 'MENI', 'La menomazione non è prevista per questo tipo di assistenza.');
+            $this->expect($result, 'H2', $line, $f['menomazione'], in_array($type, ['RIA', 'NNA', 'ABA'], true), 'MENI', 'La menomazione non è prevista per questo tipo di assistenza.');
             $this->inTable($result, 'H2', $line, $f['menomazione'], $v('menomazione'), 'impairments_disc15', 'MENE');
         }
         $diagnosis = $v('diagnosi_icd9');
@@ -556,7 +556,10 @@ final class FlussiHValidator
     {
         $values = $this->config['reference_tables'][$table] ?? [];
         if ($values !== [] && ! in_array($value, $values, true)) {
-            $this->fieldIssue($result, $file, $line, $code, "Valore non presente nella tabella {$table}.", $field);
+            $message = $table === 'services_disc08' && preg_match('/^\d{3}\.\d{3}$/', $value) === 1
+                ? "Codice prestazione vecchio non ammesso: {$value}. Utilizzare il corrispondente codice nuovo."
+                : "Valore non presente nella tabella {$table}.";
+            $this->fieldIssue($result, $file, $line, $code, $message, $field);
         }
     }
 

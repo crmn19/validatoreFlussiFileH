@@ -269,7 +269,7 @@ Alcuni controlli dipendono da elenchi regionali che non sono contenuti nel tracc
     'regions_disc01' => ['150'],
     'doctor_types_disc07' => ['M'],
     'impairments_disc15' => ['ABCDE'],
-    'services_disc08' => ['ABC1234'],
+    'services_disc08' => ['DIS.001', 'NNA.001', 'CTD.001', 'HOS.001', 'SME.001', 'RIA.001'],
     'icd9cm_2002' => ['123.45'],
 ],
 
@@ -291,6 +291,8 @@ Alcuni controlli dipendono da elenchi regionali che non sono contenuti nel tracc
 ```
 
 I valori dell'esempio non sono anagrafiche ufficiali. Devono essere sostituiti con quelli validi per il periodo da controllare. Se una tabella è vuota, il formato del campo viene comunque verificato, ma il valore non viene respinto perché assente dall'elenco.
+
+Per il campo H2 `codice_prestazione`, il pacchetto include i 102 valori della colonna **Codice Nuovo** della tabella di metaconversione SoftwareEngine. Sono ammessi anche `002.000`, `003.000` e `004.000` come eccezioni. Gli altri valori della colonna **Codice Vecchio** non sono ammessi e producono l'errore grave `DTLPT`.
 
 ## Verifica del pacchetto
 

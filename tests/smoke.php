@@ -52,7 +52,7 @@ function h2(string $row, string $total, array $overrides = []): string
         'data_inizio_ciclo' => '01012025', 'data_fine_ciclo' => '31012025',
         'progressivo_riga' => $row, 'data_inizio_periodo' => '01012025',
         'data_fine_periodo' => '31012025', 'quantita' => $row === '99' ? '000' : '001',
-        'codifica_nomenclatore' => 't', 'codice_prestazione' => 'ABC1234',
+        'codifica_nomenclatore' => 't', 'codice_prestazione' => 'RIA.001',
         'onere_prestazione' => '0', 'importo_compartecipazione' => '000000,00',
         'posizione_compartecipazione' => '0', 'importo_totale' => $total,
         'anno' => '2025', 'identificativo_struttura' => '12345600',
@@ -82,12 +82,48 @@ assert(in_array('DPDCI', array_map(static function ($i) { return $i->code; }, $d
 
 $tariffValidator = new FlussiHValidator([
     'regional_warnings' => false,
-    'service_rules' => ['ABC1234' => ['assistance' => ['RIA'], 'unit_amount' => '000010,00']],
+    'service_rules' => ['RIA.001' => ['assistance' => ['RIA'], 'unit_amount' => '000010,00']],
 ]);
 $tariffResult = $tariffValidator->validateContents(h1('01')."\n".h1('99'), h2('01', '000009,00')."\n".h2('99', '000009,00'));
 $tariffCodes = array_map(static function ($i) { return $i->code; }, $tariffResult->issues());
 assert(in_array('DTLPE', $tariffCodes, true));
 assert(in_array('DTLIE', $tariffCodes, true));
+
+$legacyServiceResult = (new FlussiHValidator(['regional_warnings' => false]))->validateContents(
+    h1('01')."\n".h1('99'),
+    h2('01', '000010,00', ['codice_prestazione' => '001.001'])."\n".h2('99', '000010,00', ['codice_prestazione' => '001.001'])
+);
+$legacyServiceIssues = array_values(array_filter($legacyServiceResult->issues(), static function ($i) { return $i->code === 'DTLPT'; }));
+assert(! $legacyServiceResult->isValid());
+assert(count($legacyServiceIssues) === 2);
+assert(strpos($legacyServiceIssues[0]->message, 'Codice prestazione vecchio non ammesso') !== false);
+
+$abaResult = (new FlussiHValidator(['regional_warnings' => false]))->validateContents(
+    h1('01')."\n".h1('99'),
+    h2('01', '000010,00', [
+        'tipo_assistenza' => 'ABA',
+        'menomazione' => 'MEE07',
+        'diagnosi_icd9' => '2990',
+        'codice_prestazione' => '002.000',
+    ])."\n".h2('99', '000010,00', [
+        'tipo_assistenza' => 'ABA',
+        'menomazione' => 'MEE07',
+        'diagnosi_icd9' => '2990',
+        'codice_prestazione' => '002.000',
+    ])
+);
+$abaBlockingCodes = array_map(static function ($i) { return $i->code; }, array_filter($abaResult->issues(), static function ($i) { return $i->severity === 'error'; }));
+assert($abaResult->isValid(), json_encode($abaResult, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+assert(array_intersect(['TAEE', 'MENI', 'DTLPT'], $abaBlockingCodes) === []);
+
+foreach (['003.000', '004.000'] as $allowedLegacyService) {
+    $allowedLegacyResult = (new FlussiHValidator(['regional_warnings' => false]))->validateContents(
+        h1('01')."\n".h1('99'),
+        h2('01', '000010,00', ['codice_prestazione' => $allowedLegacyService])."\n".h2('99', '000010,00', ['codice_prestazione' => $allowedLegacyService])
+    );
+    $allowedLegacyCodes = array_map(static function ($i) { return $i->code; }, $allowedLegacyResult->issues());
+    assert(! in_array('DTLPT', $allowedLegacyCodes, true));
+}
 
 $invalid = $validator->validateContents(substr(h1('01'), 0, -1), h2('01', '000010,00'));
 assert(! $invalid->isValid());

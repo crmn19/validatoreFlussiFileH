@@ -28,7 +28,16 @@ return [
         'doctor_types_disc07' => [],
         'doctors_disc20' => [],
         'impairments_disc15' => [],
-        'services_disc08' => [],
+        /* Codici nuovi della metaconversione SoftwareEngine, più le eccezioni indicate. */
+        'services_disc08' => array_merge(
+            ['002.000', '003.000', '004.000'],
+            array_map(static function (int $n): string { return sprintf('DIS.%03d', $n); }, range(1, 17)),
+            array_map(static function (int $n): string { return sprintf('NNA.%03d', $n); }, range(1, 29)),
+            array_map(static function (int $n): string { return sprintf('CTD.%03d', $n); }, range(1, 28)),
+            array_map(static function (int $n): string { return sprintf('HOS.%03d', $n); }, range(1, 2)),
+            array_map(static function (int $n): string { return sprintf('SME.%03d', $n); }, range(1, 12)),
+            array_map(static function (int $n): string { return sprintf('RIA.%03d', $n); }, range(1, 14))
+        ),
         'icd9cm_2002' => [],
     ],
 
