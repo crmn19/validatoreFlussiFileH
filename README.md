@@ -36,9 +36,7 @@ Il pacchetto è disponibile nel repository:
 https://github.com/crmn19/validatoreFlussiFileH
 ```
 
-Prima dell'installazione serve un token GitHub autorizzato ad accedere al repository. È consigliato un token fine-grained limitato a `validatoreFlussiFileH`, con il permesso `Contents: Read-only`. Il permesso `Read and write` serve soltanto a chi deve anche modificare e pubblicare il codice del pacchetto.
-
-Il token non deve essere inserito nel `composer.json`, nel README o in altri file versionati.
+Prima dell'installazione serve un token GitHub autorizzato ad accedere al repository.
 
 Entrare nella cartella principale dell'applicazione Laravel che deve utilizzare il validatore. In questa cartella deve essere presente il file `artisan`:
 
@@ -55,7 +53,7 @@ composer require carmenromano/laravel-flussi-h-validator:dev-main
 php artisan optimize:clear
 ```
 
-Alla prima installazione Composer chiede `Token (hidden):`. Incollare il token GitHub e premere Invio; i caratteri non vengono mostrati mentre si incolla. Composer conserva la credenziale nel proprio file `auth.json`, separato dal progetto.
+Alla prima installazione Composer chiede `Token (hidden):`. Incollare il token GitHub e premere Invio. Composer conserva la credenziale nel proprio file `auth.json`, separato dal progetto.
 
 Il primo comando registra il repository nel `composer.json`; il secondo scarica e installa il pacchetto dal ramo `main`. Non occorre indicare il percorso locale in cui è stato sviluppato il validatore.
 
@@ -101,15 +99,15 @@ Nel `composer.json` del progetto `gestionale` aggiungere il repository locale:
 
 ```json
 {
-    "repositories": [
-        {
-            "type": "path",
-            "url": "../validatore_flussi_file_h",
-            "options": {
-                "symlink": true
-            }
-        }
-    ]
+  "repositories": [
+    {
+      "type": "path",
+      "url": "../validatore_flussi_file_h",
+      "options": {
+        "symlink": true
+      }
+    }
+  ]
 }
 ```
 
@@ -292,7 +290,7 @@ Alcuni controlli dipendono da elenchi regionali che non sono contenuti nel tracc
 
 I valori dell'esempio non sono anagrafiche ufficiali. Devono essere sostituiti con quelli validi per il periodo da controllare. Se una tabella è vuota, il formato del campo viene comunque verificato, ma il valore non viene respinto perché assente dall'elenco.
 
-Per il campo H2 `codice_prestazione`, il pacchetto include i 102 valori della colonna **Codice Nuovo** della tabella di metaconversione SoftwareEngine. Sono ammessi anche `002.000`, `003.000` e `004.000` come eccezioni. Gli altri valori della colonna **Codice Vecchio** non sono ammessi e producono l'errore grave `DTLPT`.
+Per il campo H2 `codice_prestazione`, il pacchetto include i 102 valori della colonna **Codice Nuovo**. Sono ammessi anche `002.000`, `003.000` e `004.000` come eccezioni. Gli altri valori della colonna **Codice Vecchio** non sono ammessi e producono l'errore grave `DTLPT`.
 
 ## Verifica del pacchetto
 
