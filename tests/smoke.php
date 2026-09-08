@@ -9,9 +9,15 @@ spl_autoload_register(static function (string $class): void {
 
 use FlussiH\Validator\FlussiHValidator;
 use FlussiH\Validator\Reports\XlsxReportExporter;
+use FlussiH\Validator\Reference\ServiceRules;
 use FlussiH\Validator\Schema\FieldDefinition;
 use FlussiH\Validator\Schema\H1Schema;
 use FlussiH\Validator\Schema\H2Schema;
+
+$serviceRules = ServiceRules::all();
+assert(count($serviceRules) === 102);
+assert($serviceRules['NNA.013']['unit_amount'] === '000118,070');
+assert($serviceRules['NNA.013']['asl_unit_amount'] === '000059,035');
 
 /** @param list<FieldDefinition> $fields @param array<string, string> $values */
 function record(array $fields, int $length, array $values): string
@@ -61,7 +67,7 @@ function h2(string $row, string $total, array $overrides = []): string
     ], $overrides));
 }
 
-$validator = new FlussiHValidator();
+$validator = new FlussiHValidator(['service_rules' => []]);
 $valid = $validator->validateContents(h1('01')."\n".h1('99'), h2('01', '000010,00')."\n".h2('99', '000010,00'));
 assert($valid->isValid(), json_encode($valid, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 $warnings = array_filter($valid->issues(), static function ($i) { return $i->severity === 'warning'; });
@@ -89,7 +95,7 @@ $tariffCodes = array_map(static function ($i) { return $i->code; }, $tariffResul
 assert(in_array('DTLPE', $tariffCodes, true));
 assert(in_array('DTLIE', $tariffCodes, true));
 
-$legacyServiceResult = (new FlussiHValidator(['regional_warnings' => false]))->validateContents(
+$legacyServiceResult = (new FlussiHValidator(['regional_warnings' => false, 'service_rules' => []]))->validateContents(
     h1('01')."\n".h1('99'),
     h2('01', '000010,00', ['codice_prestazione' => '001.001'])."\n".h2('99', '000010,00', ['codice_prestazione' => '001.001'])
 );
@@ -98,7 +104,7 @@ assert(! $legacyServiceResult->isValid());
 assert(count($legacyServiceIssues) === 2);
 assert(strpos($legacyServiceIssues[0]->message, 'Codice prestazione vecchio non ammesso') !== false);
 
-$abaResult = (new FlussiHValidator(['regional_warnings' => false]))->validateContents(
+$abaResult = (new FlussiHValidator(['regional_warnings' => false, 'service_rules' => []]))->validateContents(
     h1('01')."\n".h1('99'),
     h2('01', '000010,00', [
         'tipo_assistenza' => 'ABA',
@@ -117,13 +123,33 @@ assert($abaResult->isValid(), json_encode($abaResult, JSON_PRETTY_PRINT | JSON_U
 assert(array_intersect(['TAEE', 'MENI', 'DTLPT'], $abaBlockingCodes) === []);
 
 foreach (['003.000', '004.000'] as $allowedLegacyService) {
-    $allowedLegacyResult = (new FlussiHValidator(['regional_warnings' => false]))->validateContents(
+    $allowedLegacyResult = (new FlussiHValidator(['regional_warnings' => false, 'service_rules' => []]))->validateContents(
         h1('01')."\n".h1('99'),
         h2('01', '000010,00', ['codice_prestazione' => $allowedLegacyService])."\n".h2('99', '000010,00', ['codice_prestazione' => $allowedLegacyService])
     );
     $allowedLegacyCodes = array_map(static function ($i) { return $i->code; }, $allowedLegacyResult->issues());
     assert(! in_array('DTLPT', $allowedLegacyCodes, true));
 }
+
+$builtInRateResult = (new FlussiHValidator(['regional_warnings' => false]))->validateContents(
+    h1('01')."\n".h1('99'),
+    h2('01', '000046,50', ['codice_prestazione' => 'RIA.001'])."\n".h2('99', '000046,50', ['codice_prestazione' => 'RIA.001'])
+);
+assert($builtInRateResult->isValid(), json_encode($builtInRateResult, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+
+$fractionResult = (new FlussiHValidator(['regional_warnings' => false]))->validateContents(
+    h1('01')."\n".h1('99'),
+    h2('01', '000118,07', [
+        'codice_prestazione' => 'NNA.013',
+        'importo_compartecipazione' => '000059,04',
+        'posizione_compartecipazione' => '1',
+    ])."\n".h2('99', '000059,03', [
+        'codice_prestazione' => 'NNA.013',
+        'importo_compartecipazione' => '000059,04',
+        'posizione_compartecipazione' => '1',
+    ])
+);
+assert(in_array('CENT_FRACTION', array_map(static function ($i) { return $i->code; }, $fractionResult->issues()), true));
 
 $invalid = $validator->validateContents(substr(h1('01'), 0, -1), h2('01', '000010,00'));
 assert(! $invalid->isValid());

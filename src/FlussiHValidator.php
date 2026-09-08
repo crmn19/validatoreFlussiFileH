@@ -485,12 +485,30 @@ final class FlussiHValidator
 
         $quantity = (int) trim((string) $record['quantita']);
         if (isset($rule['unit_amount'])) {
-            $expected = $quantity * $this->cents((string) $rule['unit_amount']);
-            $actual = $this->cents(trim((string) $record['importo_totale']));
-            if ($actual !== $expected) {
-                $this->fieldIssue($result, 'H2', $line, 'DTLIE', 'Importo nel dettaglio errato: atteso '.$this->formatCents($expected).'.', $fields['importo_totale']);
+            $expected = $this->exactRateTotalCents((string) $rule['unit_amount'], $quantity);
+            if ($expected === null) {
+                $this->fieldIssue($result, 'H2', $line, 'CENT_FRACTION', 'Retta totale non rappresentabile in centesimi interi: la tariffa non deve essere arrotondata.', $fields['importo_totale']);
+            } else {
+                $actual = $this->cents(trim((string) $record['importo_totale']));
+                if ($actual !== $expected) {
+                    $this->fieldIssue($result, 'H2', $line, 'DTLIE', 'Retta totale errata: atteso '.$this->formatCents($expected).'.', $fields['importo_totale']);
+                }
             }
         }
+        if (isset($rule['asl_unit_amount'])) {
+            $expected = $this->exactRateTotalCents((string) $rule['asl_unit_amount'], $quantity);
+            if ($expected === null) {
+                $this->fieldIssue($result, 'H2', $line, 'CENT_FRACTION', 'Quota ASL non rappresentabile in centesimi interi: la tariffa non deve essere arrotondata.', $fields['importo_compartecipazione']);
+            } else {
+                $total = $this->cents(trim((string) $record['importo_totale']));
+                $copay = $this->cents(trim((string) $record['importo_compartecipazione']));
+                $actual = $total - $copay;
+                if ($actual !== $expected) {
+                    $this->fieldIssue($result, 'H2', $line, 'IMPASL', 'Quota ASL errata: atteso '.$this->formatCents($expected).', trovato '.$this->formatCents($actual).'.', $fields['importo_compartecipazione']);
+                }
+            }
+        }
+        /* Compatibilità con eventuali configurazioni precedenti. */
         if (isset($rule['copay_unit_amount'])) {
             $expected = $quantity * $this->cents((string) $rule['copay_unit_amount']);
             $actual = $this->cents(trim((string) $record['importo_compartecipazione']));
@@ -545,6 +563,19 @@ final class FlussiHValidator
     private function cents(string $amount): int
     {
         return preg_match('/^(\d+),(\d{2})$/', $amount, $m) === 1 ? ((int) $m[1] * 100) + (int) $m[2] : 0;
+    }
+
+    private function exactRateTotalCents(string $amount, int $quantity): ?int
+    {
+        if (preg_match('/^(\d+),(\d{2})(\d?)$/', $amount, $matches) !== 1) {
+            return null;
+        }
+        $mills = ((int) $matches[1] * 1000)
+            + ((int) $matches[2] * 10)
+            + ($matches[3] === '' ? 0 : (int) $matches[3]);
+        $totalMills = $mills * $quantity;
+
+        return $totalMills % 10 === 0 ? intdiv($totalMills, 10) : null;
     }
 
     private function formatCents(int $amount): string

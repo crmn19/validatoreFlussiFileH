@@ -281,9 +281,8 @@ Alcuni controlli dipendono da elenchi regionali che non sono contenuti nel tracc
 
 'service_rules' => [
     'NNA.013' => [
-        'assistance' => ['RSD'],
-        'unit_amount' => '000118,07',
-        'copay_unit_amount' => '000059,04',
+        'unit_amount' => '000118,070',
+        'asl_unit_amount' => '000059,035',
     ],
 ],
 ```
@@ -291,6 +290,10 @@ Alcuni controlli dipendono da elenchi regionali che non sono contenuti nel tracc
 I valori dell'esempio non sono anagrafiche ufficiali. Devono essere sostituiti con quelli validi per il periodo da controllare. Se una tabella è vuota, il formato del campo viene comunque verificato, ma il valore non viene respinto perché assente dall'elenco.
 
 Per il campo H2 `codice_prestazione`, il pacchetto include i 102 valori della colonna **Codice Nuovo**. Sono ammessi anche `002.000`, `003.000` e `004.000` come eccezioni. Gli altri valori della colonna **Codice Vecchio** non sono ammessi e producono l'errore grave `DTLPT`.
+
+Per i 102 codici nuovi sono incluse anche la retta totale (`unit_amount`) e la quota ASL (`asl_unit_amount`) ricavate dalla stessa tabella. La quota ASL del record è calcolata sottraendo la compartecipazione dalla retta totale; la suddivisione della compartecipazione tra Comune e utente non viene controllata.
+
+Le tariffe conservano i tre decimali presenti nella tabella. Il validatore non arrotonda: se tariffa × quantità produce una frazione di centesimo, viene restituito l'errore grave `CENT_FRACTION`.
 
 ## Verifica del pacchetto
 

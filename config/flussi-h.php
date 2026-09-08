@@ -46,14 +46,13 @@ return [
     'structure_types' => [],     // es. 'RSA313' => '2'
 
     /*
-     * Regole tariffarie opzionali, indicizzate per codice prestazione:
+     * Regole tariffarie indicizzate per codice prestazione:
      * 'NNA.013' => [
-     *     'assistance' => ['RSD'],
-     *     'unit_amount' => '000118,07',
-     *     'copay_unit_amount' => '000059,04',
+     *     'unit_amount' => '000118,070',
+     *     'asl_unit_amount' => '000059,035',
      * ]
      */
-    'service_rules' => [],
+    'service_rules' => \FlussiH\Validator\Reference\ServiceRules::all(),
 
     /* Severità rilevate nei file di restituzione: warning non invalida il risultato. */
     'warning_codes' => [
