@@ -3,7 +3,7 @@
 return [
     'web' => [
         'enabled' => true,
-        'path' => 'flussi-h',
+        'path' => 'validatore/flussi-h',
         'middleware' => ['web'],
         'max_upload_kb' => 51200,
     ],

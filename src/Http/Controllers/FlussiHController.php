@@ -9,6 +9,17 @@ use Illuminate\Routing\Controller;
 
 final class FlussiHController extends Controller
 {
+    public function brandLogo()
+    {
+        return response()->file(
+            dirname(__DIR__, 3).'/resources/assets/software-engine-logo.webp',
+            [
+                'Content-Type' => 'image/webp',
+                'Cache-Control' => 'public, max-age=604800',
+            ]
+        );
+    }
+
     public function index()
     {
         return view('flussi-h-validator::upload');

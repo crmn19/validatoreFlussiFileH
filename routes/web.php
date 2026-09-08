@@ -7,6 +7,7 @@ Route::middleware(config('flussi-h.web.middleware', ['web']))
     ->prefix(trim((string) config('flussi-h.web.path', 'flussi-h'), '/'))
     ->name('flussi-h.')
     ->group(function (): void {
+        Route::get('/assets/software-engine-logo.webp', [FlussiHController::class, 'brandLogo'])->name('brand-logo');
         Route::get('/', [FlussiHController::class, 'index'])->name('index');
         Route::post('/validate', [FlussiHController::class, 'validateFiles'])->name('validate');
     });

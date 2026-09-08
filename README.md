@@ -24,7 +24,7 @@ composer install
 php artisan serve
 ```
 
-Aprire quindi [http://127.0.0.1:8000/flussi-h](http://127.0.0.1:8000/flussi-h). Dalla pagina si caricano insieme il file H1 e il file H2; il risultato viene scaricato in formato `.xlsx`.
+Aprire quindi [http://127.0.0.1:8000/validatore/flussi-h](http://127.0.0.1:8000/validatore/flussi-h). Dalla pagina si caricano insieme il file H1 e il file H2; il risultato viene scaricato in formato `.xlsx`.
 
 ## Installazione in un altro progetto Laravel
 
@@ -63,7 +63,7 @@ Verificare infine che il pacchetto e la rotta siano stati registrati:
 
 ```bash
 composer show carmenromano/laravel-flussi-h-validator
-php artisan route:list --path=flussi-h
+php artisan route:list --path=validatore/flussi-h
 ```
 
 Per installare gli aggiornamenti pubblicati sul ramo `main`:
@@ -165,7 +165,7 @@ Viene creato il file `config/flussi-h.php`. Le impostazioni principali dell'inte
 ```php
 'web' => [
     'enabled' => true,
-    'path' => 'flussi-h',
+    'path' => 'validatore/flussi-h',
     'middleware' => ['web'],
     'max_upload_kb' => 51200,
 ],
@@ -193,7 +193,7 @@ Una volta installato il pacchetto, avviare l'applicazione Laravel:
 php artisan serve
 ```
 
-La pagina è disponibile all'indirizzo `/flussi-h`. Il report generato contiene:
+La pagina è disponibile all'indirizzo `/validatore/flussi-h`. Il report generato contiene:
 
 - **Riepilogo**, con esito della validazione, numero di record, errori gravi e avvertimenti raggruppati;
 - **Dettaglio errori**, con file, riga, campo, posizione, codice, descrizione e gravità.
