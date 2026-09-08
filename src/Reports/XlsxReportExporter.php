@@ -9,7 +9,7 @@ use ZipArchive;
 
 final class XlsxReportExporter
 {
-    public function export(ValidationResult $result, string $h1Name, string $h2Name): string
+    public function export(ValidationResult $result, string $h1Name, string $h2Name, bool $includeWarnings = true): string
     {
         $path = tempnam(sys_get_temp_dir(), 'flussi-h-');
         if ($path === false) {
@@ -26,14 +26,14 @@ final class XlsxReportExporter
         $zip->addFromString('xl/workbook.xml', $this->workbook());
         $zip->addFromString('xl/_rels/workbook.xml.rels', $this->workbookRelationships());
         $zip->addFromString('xl/styles.xml', $this->styles());
-        $zip->addFromString('xl/worksheets/sheet1.xml', $this->summarySheet($result, $h1Name, $h2Name));
-        $zip->addFromString('xl/worksheets/sheet2.xml', $this->detailSheet($result));
+        $zip->addFromString('xl/worksheets/sheet1.xml', $this->summarySheet($result, $h1Name, $h2Name, $includeWarnings));
+        $zip->addFromString('xl/worksheets/sheet2.xml', $this->detailSheet($result, $includeWarnings));
         $zip->close();
 
         return $path;
     }
 
-    private function summarySheet(ValidationResult $result, string $h1Name, string $h2Name): string
+    private function summarySheet(ValidationResult $result, string $h1Name, string $h2Name, bool $includeWarnings): string
     {
         $counts = $result->recordCounts();
         $rows = [
@@ -44,12 +44,15 @@ final class XlsxReportExporter
             [['Esito', 1], [$this->outcome($result), $result->isValid() ? ($result->warningCount() > 0 ? 3 : 0) : 2]],
             [['Record H1', 1], [(string) $counts['h1'], 0], ['Record H2', 1], [(string) $counts['h2'], 0]],
             [['Errori gravi', 1], [(string) $result->errorCount(), 2], ['Avvertimenti', 1], [(string) $result->warningCount(), 3]],
-            [],
+            [['Contenuto report', 1], [$includeWarnings ? 'Errori gravi e avvertimenti' : 'Solo errori gravi; avvertimenti esclusi dal dettaglio', 0]],
             [['Tipo', 1], ['Codice', 1], ['Problema rilevato', 1], ['Come correggere', 1], ['Casi', 1]],
         ];
 
         $aggregated = [];
         foreach ($result->issues() as $issue) {
+            if (! $includeWarnings && $issue->severity === 'warning') {
+                continue;
+            }
             $key = $issue->severity.'|'.$issue->code;
             if (! isset($aggregated[$key])) {
                 $aggregated[$key] = ['count' => 0, 'issue' => $issue];
@@ -69,19 +72,21 @@ final class XlsxReportExporter
             ];
         }
         if ($aggregated === []) {
-            $rows[] = [['Nessuna anomalia rilevata.', 0]];
+            $rows[] = [[$includeWarnings ? 'Nessuna anomalia rilevata.' : 'Nessun errore grave. Gli avvertimenti non bloccanti sono esclusi da questo report.', 0]];
         }
 
         return $this->worksheet($rows, [20, 16, 58, 68, 12], 9, 'A9:E9');
     }
 
-    private function detailSheet(ValidationResult $result): string
+    private function detailSheet(ValidationResult $result, bool $includeWarnings): string
     {
         $rows = [[
             ['N.', 1], ['Dove', 1], ['Tipo', 1], ['Codice', 1],
             ['Campo e posizione', 1], ['Problema rilevato', 1], ['Come correggere', 1],
         ]];
-        $issues = $result->issues();
+        $issues = array_values(array_filter($result->issues(), static function (ValidationIssue $issue) use ($includeWarnings): bool {
+            return $includeWarnings || $issue->severity === 'error';
+        }));
         usort($issues, static function (ValidationIssue $a, ValidationIssue $b): int {
             $severity = ($a->severity === 'error' ? 0 : 1) <=> ($b->severity === 'error' ? 0 : 1);
             return $severity !== 0 ? $severity : [$a->file, $a->line, $a->code] <=> [$b->file, $b->line, $b->code];
@@ -101,7 +106,9 @@ final class XlsxReportExporter
             ];
         }
         if ($result->issues() === []) {
-            $rows[] = [['1', 0], ['', 0], ['OK', 0], ['', 0], ['', 0], ['Nessuna anomalia rilevata.', 0], ['', 0]];
+            $rows[] = [['1', 0], ['', 0], ['OK', 0], ['', 0], ['', 0], [$includeWarnings ? 'Nessuna anomalia rilevata.' : 'Nessun errore grave.', 0], ['', 0]];
+        } elseif ($issues === []) {
+            $rows[] = [['1', 0], ['', 0], ['OK', 0], ['', 0], ['', 0], ['Nessun errore grave. Sono presenti soltanto avvertimenti non bloccanti, esclusi su richiesta.', 0], ['', 0]];
         }
 
         return $this->worksheet($rows, [8, 20, 20, 16, 38, 72, 72], 1, 'A1:G1');

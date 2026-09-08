@@ -29,6 +29,8 @@
         .errors { margin:0 28px; padding:15px 18px; border-left:4px solid var(--error); border-radius:8px; color:#7e2020; background:#fff0f0; }
         .errors ul { margin:5px 0 0; padding-left:20px; }
         .actions { display:flex; justify-content:space-between; gap:20px; align-items:center; margin-top:25px; }
+        .options { display:flex; align-items:flex-start; gap:9px; margin-top:20px; color:var(--muted); font-size:.86rem; }
+        .options input { margin-top:3px; accent-color:var(--blue); }
         .privacy { color:var(--muted); font-size:.78rem; line-height:1.45; }
         button { flex:0 0 auto; padding:13px 22px; border:0; border-radius:10px; color:#fff; background:var(--blue); box-shadow:0 8px 20px rgba(23,107,135,.22); font-size:.94rem; font-weight:800; cursor:pointer; }
         button:hover { background:#125b74; }
@@ -66,6 +68,10 @@
                     <input type="file" name="h2" accept=".h2,.txt,text/plain" required>
                 </label>
             </div>
+            <label class="options">
+                <input type="checkbox" name="include_warnings" value="1">
+                <span>Includi anche gli avvertimenti non bloccanti. Lascia deselezionato per ottenere un Excel con i soli errori gravi.</span>
+            </label>
             <div class="actions">
                 <div class="privacy">I file vengono elaborati durante la richiesta e non sono archiviati dal pacchetto.</div>
                 <button type="submit">Valida</button>

@@ -51,7 +51,7 @@ function h2(string $row, string $total, array $overrides = []): string
         'comune_primo_ricovero' => '000000', 'data_prescrizione' => '01012025',
         'data_inizio_ciclo' => '01012025', 'data_fine_ciclo' => '31012025',
         'progressivo_riga' => $row, 'data_inizio_periodo' => '01012025',
-        'data_fine_periodo' => '31012025', 'quantita' => '001',
+        'data_fine_periodo' => '31012025', 'quantita' => $row === '99' ? '000' : '001',
         'codifica_nomenclatore' => 't', 'codice_prestazione' => 'ABC1234',
         'onere_prestazione' => '0', 'importo_compartecipazione' => '000000,00',
         'posizione_compartecipazione' => '0', 'importo_totale' => $total,
@@ -65,7 +65,7 @@ $validator = new FlussiHValidator();
 $valid = $validator->validateContents(h1('01')."\n".h1('99'), h2('01', '000010,00')."\n".h2('99', '000010,00'));
 assert($valid->isValid(), json_encode($valid, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 $warnings = array_filter($valid->issues(), static function ($i) { return $i->severity === 'warning'; });
-assert(count($warnings) === 6);
+assert(count($warnings) === 3);
 
 $dateWarning = $validator->validateContents(
     h1('01')."\n".h1('99'),

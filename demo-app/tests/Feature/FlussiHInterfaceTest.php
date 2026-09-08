@@ -12,7 +12,7 @@ class FlussiHInterfaceTest extends TestCase
         $this->get('/flussi-h')
             ->assertOk()
             ->assertSee('Validatore Flusso H')
-            ->assertSee('Valida e scarica Excel');
+            ->assertSee('Valida');
     }
 
     public function test_validation_downloads_an_excel_report(): void

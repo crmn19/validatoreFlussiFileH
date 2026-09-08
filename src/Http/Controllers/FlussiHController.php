@@ -32,7 +32,12 @@ final class FlussiHController extends Controller
         $h1 = $validated['h1'];
         $h2 = $validated['h2'];
         $result = $validator->validate($h1->getRealPath(), $h2->getRealPath());
-        $report = $exporter->export($result, $h1->getClientOriginalName(), $h2->getClientOriginalName());
+        $report = $exporter->export(
+            $result,
+            $h1->getClientOriginalName(),
+            $h2->getClientOriginalName(),
+            $request->has('include_warnings')
+        );
         $filename = 'report-errori-flusso-h-'.date('Ymd-His').'.xlsx';
 
         return response()->download(

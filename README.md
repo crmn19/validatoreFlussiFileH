@@ -4,7 +4,7 @@ Compatibile con **PHP 7.3 o successivo** e **Laravel dalla versione 7 alla 13**.
 
 Pacchetto Laravel per validare i file a lunghezza fissa del **Flusso H della Regione Campania**:
 
-- H1 / ANA, record da 265 byte;
+- H1 / ANA, record da 266 byte nel tracciato regionale corrente;
 - H2 / SAN, record da 197 byte.
 
 L'implementazione segue le specifiche del documento “Specifiche tecniche del Sistema Informativo Sanitario Regionale”, Allegato 1, ed è stata confrontata con report di restituzione regionali reali. Controlla lunghezza, posizione, tipo, obbligatorietà, valori noti, date, importi, identificativi, sequenze `01…99`, corrispondenza H1/H2 e totale della riga 99.
@@ -52,6 +52,8 @@ Viene scaricato un file `.xlsx` con:
 
 - foglio **Riepilogo**, con esito, numero dei record, errori gravi e avvertimenti aggregati;
 - foglio **Dettaglio errori**, con file, riga, campo, posizione, codice regionale, descrizione e severità.
+
+Per impostazione predefinita il dettaglio mostra solo gli **errori gravi**, così un file valido non produce migliaia di righe poco utili. Dalla pagina si può selezionare “Includi anche gli avvertimenti non bloccanti” per ottenere un report analogo alla restituzione regionale completa.
 
 Il percorso, la dimensione massima e i middleware sono modificabili nella configurazione:
 
