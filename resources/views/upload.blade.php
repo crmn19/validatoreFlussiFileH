@@ -52,6 +52,7 @@
             <div><h2>Nuova validazione</h2></div>
         </div>
 
+        
         @if ($errors->any())
             <div class="errors" role="alert"><strong>Controlla i file selezionati:</strong><ul>@foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>
         @endif
