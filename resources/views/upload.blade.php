@@ -75,10 +75,10 @@
             </div>
             <label class="options">
                 <input type="checkbox" name="include_warnings" value="1">
-                <span>Includi anche gli avvertimenti non bloccanti. Lascia deselezionato per ottenere un Excel con i soli errori gravi.</span>
+                <span>Includi anche gli avvertimenti non bloccanti. Lascia deselezionato per ottenere un report con i soli errori gravi.</span>
             </label>
             <div class="actions">
-                <div class="privacy">I file vengono elaborati durante la richiesta e non sono archiviati dal pacchetto.</div>
+                <div class="privacy">I file vengono elaborati durante la richiesta e non sono archiviati dal software.</div>
                 <button type="submit">Valida</button>
             </div>
         </form>
