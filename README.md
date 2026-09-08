@@ -28,6 +28,65 @@ Aprire quindi [http://127.0.0.1:8000/flussi-h](http://127.0.0.1:8000/flussi-h). 
 
 ## Installazione in un altro progetto Laravel
 
+### Dal repository GitHub privato
+
+Il pacchetto è disponibile nel repository:
+
+```text
+https://github.com/crmn19/validatoreFlussiFileH
+```
+
+Prima dell'installazione serve un token GitHub autorizzato ad accedere al repository. È consigliato un token fine-grained limitato a `validatoreFlussiFileH`, con il permesso `Contents: Read-only`. Il permesso `Read and write` serve soltanto a chi deve anche modificare e pubblicare il codice del pacchetto.
+
+Il token non deve essere inserito nel `composer.json`, nel README o in altri file versionati.
+
+Entrare nella cartella principale dell'applicazione Laravel che deve utilizzare il validatore. In questa cartella deve essere presente il file `artisan`:
+
+```bash
+cd /percorso/dell/applicazione-laravel
+ls artisan
+```
+
+Registrare il repository e installare il pacchetto:
+
+```bash
+composer config repositories.flussi-h vcs https://github.com/crmn19/validatoreFlussiFileH.git
+composer require carmenromano/laravel-flussi-h-validator:dev-main
+php artisan optimize:clear
+```
+
+Alla prima installazione Composer chiede `Token (hidden):`. Incollare il token GitHub e premere Invio; i caratteri non vengono mostrati mentre si incolla. Composer conserva la credenziale nel proprio file `auth.json`, separato dal progetto.
+
+Il primo comando registra il repository nel `composer.json`; il secondo scarica e installa il pacchetto dal ramo `main`. Non occorre indicare il percorso locale in cui è stato sviluppato il validatore.
+
+Verificare infine che il pacchetto e la rotta siano stati registrati:
+
+```bash
+composer show carmenromano/laravel-flussi-h-validator
+php artisan route:list --path=flussi-h
+```
+
+Per installare gli aggiornamenti pubblicati sul ramo `main`:
+
+```bash
+composer update carmenromano/laravel-flussi-h-validator
+php artisan optimize:clear
+```
+
+#### Problemi comuni durante l'installazione
+
+`Root package 'carmenromano/laravel-flussi-h-validator' cannot require itself` significa che `composer require` è stato eseguito dentro la cartella del validatore. Spostarsi nella cartella dell'applicazione Laravel e ripetere il comando.
+
+`Could not open input file: artisan` indica ugualmente che il terminale non si trova nella cartella principale di un'applicazione Laravel.
+
+Un errore GitHub `404` sul repository privato o su `contents/composer.json` indica che il token non è autorizzato sul repository oppure non dispone del permesso `Contents`. Controllare il repository selezionato nel token e sostituire l'eventuale credenziale errata:
+
+```bash
+composer config --global --auth --unset github-oauth.github.com
+composer clear-cache
+composer require carmenromano/laravel-flussi-h-validator:dev-main
+```
+
 ### Da una cartella locale
 
 Questa è la soluzione più semplice durante lo sviluppo. Si supponga di avere le due cartelle affiancate:
@@ -63,42 +122,25 @@ composer require carmenromano/laravel-flussi-h-validator:@dev
 php artisan optimize:clear
 ```
 
-Il percorso può anche essere assoluto, per esempio:
+Il percorso può anche essere assoluto e deve indicare la cartella in cui è stato salvato il pacchetto, per esempio:
 
 ```json
-"url": "/Users/carmenromano/Desktop/validatore_flussi_file_h"
+"url": "/percorso/completo/validatore_flussi_file_h"
 ```
+
+Il percorso assoluto cambia da computer a computer. Quando le cartelle sono vicine è preferibile usare il percorso relativo `../validatore_flussi_file_h`, perché rende la configurazione più facile da condividere.
 
 Con `symlink: true`, le modifiche fatte al pacchetto sono subito disponibili nel progetto che lo utilizza.
 
-### Da un repository Git privato o pubblico
+### Versioni stabili
 
-Se il pacchetto viene caricato su GitHub, GitLab o un altro server Git, nel progetto Laravel aggiungere:
-
-```json
-{
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "URL_DEL_REPOSITORY_GIT"
-        }
-    ]
-}
-```
-
-Quindi installare il ramo di sviluppo:
-
-```bash
-composer require carmenromano/laravel-flussi-h-validator:dev-main
-```
-
-Per un utilizzo stabile è preferibile creare una versione del pacchetto, ad esempio `v1.0.0`, e installarla con:
+Per un utilizzo stabile è preferibile creare una versione Git del pacchetto, ad esempio `v1.0.0`, e installarla con:
 
 ```bash
 composer require carmenromano/laravel-flussi-h-validator:^1.0
 ```
 
-Se il repository è privato, Composer deve avere le credenziali necessarie per accedervi.
+Anche per installare una versione stabile dal repository privato, Composer deve disporre di un token autorizzato.
 
 ### Da Packagist
 
