@@ -1,0 +1,53 @@
+<?php
+
+return [
+    'web' => [
+        'enabled' => true,
+        'path' => 'flussi-h',
+        'middleware' => ['web'],
+        'max_upload_kb' => 51200,
+    ],
+
+    /* provider, company o region: determina la gestione di OBA/OBR/OBRA. */
+    'submission_level' => 'provider',
+
+    /* Emula gli avvertimenti osservati nei report regionali anche al livello erogatore. */
+    'regional_warnings' => true,
+
+    /* Se una tabella è vuota viene controllato solo il formato del campo. */
+    'reference_tables' => [
+        'asl' => array_merge(
+            array_map(static function (int $n): string { return (string) $n; }, range(101, 113)),
+            array_map(static function (int $n): string { return (string) $n; }, range(201, 207)),
+            array_map(static function (int $n): string { return (string) $n; }, range(901, 912))
+        ),
+        'structures_ria11' => [],
+        'districts_disc04' => [],
+        'municipalities_disc02' => [],
+        'regions_disc01' => [],
+        'doctor_types_disc07' => [],
+        'doctors_disc20' => [],
+        'impairments_disc15' => [],
+        'services_disc08' => [],
+        'icd9cm_2002' => [],
+    ],
+
+    /* Relazioni opzionali ricavate dalle anagrafiche regionali aggiornate. */
+    'structure_districts' => [], // es. 'RSA313' => '00051'
+    'structure_types' => [],     // es. 'RSA313' => '2'
+
+    /*
+     * Regole tariffarie opzionali, indicizzate per codice prestazione:
+     * 'NNA.013' => [
+     *     'assistance' => ['RSD'],
+     *     'unit_amount' => '000118,07',
+     *     'copay_unit_amount' => '000059,04',
+     * ]
+     */
+    'service_rules' => [],
+
+    /* Severità rilevate nei file di restituzione: warning non invalida il risultato. */
+    'warning_codes' => [
+        'CDME', 'CDMM', 'CFMAM', 'CFMM', 'DCDFI', 'DPDCI', 'ICDI', 'ICD10M',
+    ],
+];
