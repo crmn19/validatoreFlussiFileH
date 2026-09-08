@@ -142,6 +142,7 @@ final class FlussiHValidator
     {
         $filler = $field->type === 'N' ? str_repeat('0', $field->length) : str_repeat(' ', $field->length);
         $isFiller = $value === $filler;
+        $isBlank = trim($value) === '';
         $required = $this->isRequired($field->mode);
         $mustBeEmpty = $this->mustBeEmpty($field->mode);
 
@@ -153,7 +154,7 @@ final class FlussiHValidator
             $this->fieldIssue($result, $file, $line, 'REQUIRED', 'Campo obbligatorio non valorizzato.', $field);
             return;
         }
-        if (! $required && $isFiller) {
+        if (! $required && ($isFiller || $isBlank)) {
             return;
         }
 
@@ -292,11 +293,12 @@ final class FlussiHValidator
         } elseif ($this->config['regional_warnings'] && ! $isClosing) {
             $this->fieldIssue($result, 'H2', $line, 'CFMAM', 'Codice fiscale del medico autorizzante mancante.', $f['cf_medico_autorizzante']);
         }
+        $firstAdmissionMunicipality = $v('comune_primo_ricovero');
         if ($type === 'ANZ') {
-            $this->expect($result, 'H2', $line, $f['comune_primo_ricovero'], $v('comune_primo_ricovero') !== '000000', 'COMPM', 'Comune del primo ricovero non specificato per assistenza ANZ.');
+            $this->expect($result, 'H2', $line, $f['comune_primo_ricovero'], $firstAdmissionMunicipality !== '' && $firstAdmissionMunicipality !== '000000', 'COMPM', 'Comune del primo ricovero non specificato per assistenza ANZ.');
         }
-        if ($v('comune_primo_ricovero') !== '000000') {
-            $this->inTable($result, 'H2', $line, $f['comune_primo_ricovero'], $v('comune_primo_ricovero'), 'municipalities_disc02', 'COMPR');
+        if ($firstAdmissionMunicipality !== '' && $firstAdmissionMunicipality !== '000000') {
+            $this->inTable($result, 'H2', $line, $f['comune_primo_ricovero'], $firstAdmissionMunicipality, 'municipalities_disc02', 'COMPR');
         }
 
         $dates = ['data_prescrizione' => 'DTPRE', 'data_inizio_ciclo' => 'DTICE', 'data_fine_ciclo' => 'DTFCE', 'data_inizio_periodo' => 'DTIFE', 'data_fine_periodo' => 'DTFFE'];

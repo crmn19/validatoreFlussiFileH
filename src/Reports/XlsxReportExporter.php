@@ -126,6 +126,13 @@ final class XlsxReportExporter
 
     private function plainDescription(ValidationIssue $issue): string
     {
+        if ($issue->code === 'NUMERIC_FORMAT') {
+            $field = $issue->field === null ? 'indicato' : str_replace('_', ' ', $issue->field);
+            $position = $issue->position === null ? '' : ' a partire dalla posizione '.$issue->position;
+
+            return 'Il campo “'.$field.'” del file '.$issue->file.$position.' contiene un valore non numerico.';
+        }
+
         $descriptions = [
             'ALL' => 'H1 e H2 non sono allineati.',
             'CDME' => 'Codice del medico prescrittore non riconosciuto.',
@@ -168,6 +175,7 @@ final class XlsxReportExporter
             'REGE' => 'Impostare il campo Regione addebitante a 150.',
             'SESI' => 'Correggere il sesso oppure il codice fiscale dell’assistito.',
             'TPSIU' => 'Usare la tipologia associata alla struttura nell’anagrafica regionale.',
+            'NUMERIC_FORMAT' => 'Inserire esclusivamente cifre; se il campo è opzionale può essere lasciato vuoto.',
         ];
         return $suggestions[$code] ?? 'Controllare il valore del campo indicato e confrontarlo con la specifica regionale.';
     }

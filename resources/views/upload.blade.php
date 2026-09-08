@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Validatore Flusso H</title>
     <style>
-        :root { color-scheme:light; --charcoal:#3f484a; --green:#409a3b; --green-soft:#f3f8f3; --paper:#fff; --ink:#252b2d; --muted:#687174; --line:#d9ddde; --error:#9a2d2d; }
+        :root { color-scheme:light; --charcoal:#3f484a; --paper:#fff; --ink:#252b2d; --muted:#687174; --line:#d9ddde; --error:#9a2d2d; }
         * { box-sizing:border-box; }
         body { margin:0; min-height:100vh; color:var(--ink); font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background:#f4f5f5; }
-        .topbar { height:5px; background:linear-gradient(90deg,var(--charcoal) 0 72%,var(--green) 72% 100%); }
+        .topbar { height:5px; background:var(--charcoal); }
         main { width:min(900px,calc(100% - 32px)); margin:48px auto; }
-        .eyebrow { color:var(--green); font-size:.76rem; font-weight:700; letter-spacing:.11em; text-transform:uppercase; }
+        .eyebrow { color:var(--muted); font-size:.76rem; font-weight:700; letter-spacing:.11em; text-transform:uppercase; }
         h1 { margin:10px 0 28px; color:var(--charcoal); font-size:clamp(2rem,5vw,3rem); font-weight:650; letter-spacing:-.03em; }
         .intro { max-width:700px; margin:0 0 30px; color:var(--muted); font-size:1.05rem; line-height:1.65; }
         .card { overflow:hidden; border:1px solid var(--line); border-radius:8px; background:var(--paper); box-shadow:0 8px 24px rgba(31,40,42,.06); }
@@ -21,7 +21,7 @@
         form { padding:28px; }
         .grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
         .upload { position:relative; min-height:175px; padding:22px; border:1px dashed #aeb5b7; border-radius:6px; background:#fafafa; transition:.15s ease; }
-        .upload:hover,.upload:focus-within { border-color:var(--green); background:var(--green-soft); }
+        .upload:hover,.upload:focus-within { border-color:#687174; background:#f5f6f6; }
         .upload strong { display:block; margin-bottom:7px; color:var(--charcoal); font-size:1rem; }
         .upload small { display:block; margin-bottom:20px; color:var(--muted); line-height:1.5; }
         input[type=file] { width:100%; color:var(--muted); font-size:.86rem; }
@@ -30,7 +30,7 @@
         .errors ul { margin:5px 0 0; padding-left:20px; }
         .actions { display:flex; justify-content:space-between; gap:20px; align-items:center; margin-top:25px; }
         .options { display:flex; align-items:flex-start; gap:9px; margin-top:20px; color:var(--muted); font-size:.86rem; }
-        .options input { margin-top:3px; accent-color:var(--green); }
+        .options input { margin-top:3px; accent-color:var(--charcoal); }
         .privacy { color:var(--muted); font-size:.78rem; line-height:1.45; }
         button { flex:0 0 auto; padding:12px 22px; border:0; border-radius:5px; color:#fff; background:var(--charcoal); font-size:.94rem; font-weight:750; cursor:pointer; }
         button:hover { background:#2f3739; }
@@ -43,7 +43,7 @@
 <body>
 <div class="topbar"></div>
 <main>
-    <div class="eyebrow">SoftwareEngine · Regione Campania</div>
+    <div class="eyebrow">Regione Campania · Assistenza riabilitativa</div>
     <h1>Validatore Flusso H</h1>
 
 

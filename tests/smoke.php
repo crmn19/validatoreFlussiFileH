@@ -67,6 +67,13 @@ assert($valid->isValid(), json_encode($valid, JSON_PRETTY_PRINT | JSON_UNESCAPED
 $warnings = array_filter($valid->issues(), static function ($i) { return $i->severity === 'warning'; });
 assert(count($warnings) === 3);
 
+$blankOptionalNumeric = $validator->validateContents(
+    h1('01')."\n".h1('99'),
+    h2('01', '000010,00', ['comune_primo_ricovero' => '      '])."\n".h2('99', '000010,00', ['comune_primo_ricovero' => '      '])
+);
+assert($blankOptionalNumeric->isValid(), json_encode($blankOptionalNumeric, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+assert(! in_array('NUMERIC_FORMAT', array_map(static function ($i) { return $i->code; }, $blankOptionalNumeric->issues()), true));
+
 $dateWarning = $validator->validateContents(
     h1('01')."\n".h1('99'),
     h2('01', '000010,00', ['data_prescrizione' => '02012025'])."\n".h2('99', '000010,00', ['data_prescrizione' => '02012025']),
