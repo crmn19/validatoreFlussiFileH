@@ -1,9 +1,9 @@
 # Validatore Flussi H per Laravel
 
-Pacchetto Laravel per controllare i file a lunghezza fissa del **Flusso H della Regione Campania**:
+Pacchetto Laravel per controllare i file del **Flusso H della Regione Campania**:
 
-- H1 / ANA, record da 266 byte;
-- H2 / SAN, record da 197 byte.
+- H1 / ANA;
+- H2 / SAN.
 
 Il validatore controlla struttura e lunghezza dei record, campi obbligatori, date, importi, codici configurati, progressivi, corrispondenza tra H1 e H2 e totali di chiusura. Al termine genera un report Excel con il riepilogo e il dettaglio degli errori trovati.
 
