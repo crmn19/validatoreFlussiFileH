@@ -81,8 +81,9 @@ final class XlsxReportExporter
     private function detailSheet(ValidationResult $result, bool $includeWarnings): string
     {
         $rows = [[
-            ['N.', 1], ['Dove', 1], ['Tipo', 1], ['Codice', 1],
-            ['Campo e posizione', 1], ['Problema rilevato', 1], ['Come correggere', 1],
+            ['N.', 1], ['Dove', 1], ['Codice fiscale paziente', 1], ['Tipo', 1], ['Codice', 1],
+            ['Campo e posizione', 1], ['Rilevato', 1], ['Previsto', 1],
+            ['Problema rilevato', 1], ['Come correggere', 1],
         ]];
         $issues = array_values(array_filter($result->issues(), static function (ValidationIssue $issue) use ($includeWarnings): bool {
             return $includeWarnings || $issue->severity === 'error';
@@ -100,18 +101,21 @@ final class XlsxReportExporter
             }
             $rows[] = [
                 [(string) ($index + 1), $style], [$location, $style],
+                [$issue->patientFiscalCode ?? '', $style],
                 [$issue->severity === 'error' ? 'ERRORE GRAVE' : 'AVVERTIMENTO', $style],
-                [$issue->code, $style], [$field, $style], [$issue->message, $style],
+                [$issue->code, $style], [$field, $style],
+                [$issue->detectedValue ?? '', $style], [$issue->expectedValue ?? '', $style],
+                [$issue->message, $style],
                 [$this->suggestion($issue->code), $style],
             ];
         }
         if ($result->issues() === []) {
-            $rows[] = [['1', 0], ['', 0], ['OK', 0], ['', 0], ['', 0], [$includeWarnings ? 'Nessuna anomalia rilevata.' : 'Nessun errore grave.', 0], ['', 0]];
+            $rows[] = [['1', 0], ['', 0], ['', 0], ['OK', 0], ['', 0], ['', 0], ['', 0], ['', 0], [$includeWarnings ? 'Nessuna anomalia rilevata.' : 'Nessun errore grave.', 0], ['', 0]];
         } elseif ($issues === []) {
-            $rows[] = [['1', 0], ['', 0], ['OK', 0], ['', 0], ['', 0], ['Nessun errore grave. Sono presenti soltanto avvertimenti non bloccanti, esclusi su richiesta.', 0], ['', 0]];
+            $rows[] = [['1', 0], ['', 0], ['', 0], ['OK', 0], ['', 0], ['', 0], ['', 0], ['', 0], ['Nessun errore grave. Sono presenti soltanto avvertimenti non bloccanti, esclusi su richiesta.', 0], ['', 0]];
         }
 
-        return $this->worksheet($rows, [8, 20, 20, 16, 38, 72, 72], 1, 'A1:G1');
+        return $this->worksheet($rows, [8, 20, 24, 20, 16, 38, 18, 18, 72, 72], 1, 'A1:J1');
     }
 
     private function outcome(ValidationResult $result): string
@@ -147,7 +151,6 @@ final class XlsxReportExporter
             'ICDI' => 'Diagnosi ICD9 indicata per un tipo di assistenza diverso da RIA/SME.',
             'IDPD' => 'Progressivo annuo duplicato.',
             'IMPCE' => 'Importo compartecipazione non coerente.',
-            'IMPASL' => 'Quota ASL diversa dalla tariffa prevista.',
             'CENT_FRACTION' => 'La tariffa moltiplicata per la quantità produce una frazione di centesimo.',
             'IMPNE' => 'Totale netto della riga 99 non coerente.',
             'REGE' => 'Regione addebitante diversa da 150.',
@@ -173,7 +176,6 @@ final class XlsxReportExporter
             'ICDI' => 'Lasciare blank la diagnosi se non richiesta oppure verificare il tipo di assistenza.',
             'IDPD' => 'Assegnare un progressivo nuovo e univoco per anno e struttura.',
             'IMPCE' => 'Ricalcolare la compartecipazione usando la tariffa prevista.',
-            'IMPASL' => 'Verificare che retta totale meno compartecipazione coincida con la quota ASL prevista.',
             'CENT_FRACTION' => 'Non arrotondare: correggere quantità o tariffa affinché il risultato sia espresso in centesimi interi.',
             'IMPNE' => 'Ricalcolare la riga 99 sommando i dettagli e sottraendo la compartecipazione quando dovuto.',
             'REGE' => 'Impostare il campo Regione addebitante a 150.',

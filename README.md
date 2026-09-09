@@ -194,7 +194,7 @@ php artisan serve
 La pagina è disponibile all'indirizzo `/validatore/flussi-h`. Il report generato contiene:
 
 - **Riepilogo**, con esito della validazione, numero di record, errori gravi e avvertimenti raggruppati;
-- **Dettaglio errori**, con file, riga, campo, posizione, codice, descrizione e gravità.
+- **Dettaglio errori**, con file, riga, codice fiscale del paziente, campo, posizione, valore rilevato, valore previsto, codice, descrizione e gravità.
 
 Per impostazione predefinita il dettaglio contiene solo gli errori gravi. Dalla pagina si può scegliere di includere anche gli avvertimenti non bloccanti.
 
@@ -291,7 +291,7 @@ I valori dell'esempio non sono anagrafiche ufficiali. Devono essere sostituiti c
 
 Per il campo H2 `codice_prestazione`, il pacchetto include i 102 valori della colonna **Codice Nuovo**. Sono ammessi anche `002.000`, `003.000` e `004.000` come eccezioni. Gli altri valori della colonna **Codice Vecchio** non sono ammessi e producono l'errore grave `DTLPT`.
 
-Per i 102 codici nuovi sono incluse anche la retta totale (`unit_amount`) e la quota ASL (`asl_unit_amount`) ricavate dalla stessa tabella. La quota ASL del record è calcolata sottraendo la compartecipazione dalla retta totale; la suddivisione della compartecipazione tra Comune e utente non viene controllata.
+Per i 102 codici nuovi sono incluse anche la retta totale (`unit_amount`) e la quota ASL (`asl_unit_amount`) ricavate dalla stessa tabella. La validazione economica controlla la retta totale prevista dal codice prestazione; non segnala differenze nella ripartizione tra quota ASL, Comune e utente.
 
 Le tariffe conservano i tre decimali presenti nella tabella. Il validatore non arrotonda: se tariffa × quantità produce una frazione di centesimo, viene restituito l'errore grave `CENT_FRACTION`.
 

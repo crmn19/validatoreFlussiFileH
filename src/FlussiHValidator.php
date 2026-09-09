@@ -59,6 +59,7 @@ final class FlussiHValidator
         ], $result);
         $this->validatePairs($h1, $h2, $result);
         $this->validateTotals($h2, $result);
+        $this->attachPatientFiscalCodes($h1, $h2, $result);
 
         return $result;
     }
@@ -459,8 +460,20 @@ final class FlussiHValidator
             if (trim((string) $closing['posizione_compartecipazione']) === '1') {
                 $sum -= $this->cents(trim((string) $closing['importo_compartecipazione']));
             }
-            if ($sum !== $this->cents(trim((string) $closing['importo_totale']))) {
-                $result->add(new ValidationIssue('H2', (int) $closing['__line'], 'IMPNE', 'Importo netto errato: la riga 99 non coincide con la somma prevista.', 'importo_totale', 149));
+            $actual = $this->cents(trim((string) $closing['importo_totale']));
+            if ($sum !== $actual) {
+                $result->add(new ValidationIssue(
+                    'H2',
+                    (int) $closing['__line'],
+                    'IMPNE',
+                    'Importo netto errato: la riga 99 non coincide con la somma prevista.',
+                    'importo_totale',
+                    149,
+                    'error',
+                    null,
+                    $this->formatCents($actual),
+                    $this->formatCents($sum)
+                ));
             }
         }
     }
@@ -487,24 +500,30 @@ final class FlussiHValidator
         if (isset($rule['unit_amount'])) {
             $expected = $this->exactRateTotalCents((string) $rule['unit_amount'], $quantity);
             if ($expected === null) {
-                $this->fieldIssue($result, 'H2', $line, 'CENT_FRACTION', 'Retta totale non rappresentabile in centesimi interi: la tariffa non deve essere arrotondata.', $fields['importo_totale']);
+                $expectedMills = $this->exactRateTotalMills((string) $rule['unit_amount'], $quantity);
+                $this->fieldIssue(
+                    $result,
+                    'H2',
+                    $line,
+                    'CENT_FRACTION',
+                    'Retta totale non rappresentabile in centesimi interi: la tariffa non deve essere arrotondata.',
+                    $fields['importo_totale'],
+                    $this->formatCents($this->cents(trim((string) $record['importo_totale']))),
+                    $expectedMills === null ? null : $this->formatMills($expectedMills)
+                );
             } else {
                 $actual = $this->cents(trim((string) $record['importo_totale']));
                 if ($actual !== $expected) {
-                    $this->fieldIssue($result, 'H2', $line, 'DTLIE', 'Retta totale errata: atteso '.$this->formatCents($expected).'.', $fields['importo_totale']);
-                }
-            }
-        }
-        if (isset($rule['asl_unit_amount'])) {
-            $expected = $this->exactRateTotalCents((string) $rule['asl_unit_amount'], $quantity);
-            if ($expected === null) {
-                $this->fieldIssue($result, 'H2', $line, 'CENT_FRACTION', 'Quota ASL non rappresentabile in centesimi interi: la tariffa non deve essere arrotondata.', $fields['importo_compartecipazione']);
-            } else {
-                $total = $this->cents(trim((string) $record['importo_totale']));
-                $copay = $this->cents(trim((string) $record['importo_compartecipazione']));
-                $actual = $total - $copay;
-                if ($actual !== $expected) {
-                    $this->fieldIssue($result, 'H2', $line, 'IMPASL', 'Quota ASL errata: atteso '.$this->formatCents($expected).', trovato '.$this->formatCents($actual).'.', $fields['importo_compartecipazione']);
+                    $this->fieldIssue(
+                        $result,
+                        'H2',
+                        $line,
+                        'DTLIE',
+                        'Retta totale errata: atteso '.$this->formatCents($expected).'.',
+                        $fields['importo_totale'],
+                        $this->formatCents($actual),
+                        $this->formatCents($expected)
+                    );
                 }
             }
         }
@@ -513,7 +532,16 @@ final class FlussiHValidator
             $expected = $quantity * $this->cents((string) $rule['copay_unit_amount']);
             $actual = $this->cents(trim((string) $record['importo_compartecipazione']));
             if ($actual !== $expected) {
-                $this->fieldIssue($result, 'H2', $line, 'IMPCE', 'Importo compartecipazione errato: atteso '.$this->formatCents($expected).'.', $fields['importo_compartecipazione']);
+                $this->fieldIssue(
+                    $result,
+                    'H2',
+                    $line,
+                    'IMPCE',
+                    'Importo compartecipazione errato: atteso '.$this->formatCents($expected).'.',
+                    $fields['importo_compartecipazione'],
+                    $this->formatCents($actual),
+                    $this->formatCents($expected)
+                );
             }
         }
     }
@@ -528,6 +556,35 @@ final class FlussiHValidator
     private function recordKey(array $record): string
     {
         return $this->groupKey($record).'|'.trim((string) $record['progressivo_riga']);
+    }
+
+    /** @param list<array<string, string|int>> $h1 @param list<array<string, string|int>> $h2 */
+    private function attachPatientFiscalCodes(array $h1, array $h2, ValidationResult $result): void
+    {
+        $h1ByLine = [];
+        $fiscalCodeByRecord = [];
+        foreach ($h1 as $record) {
+            $fiscalCode = trim((string) $record['codice_assistito']);
+            $h1ByLine[(int) $record['__line']] = $fiscalCode;
+            if (! isset($fiscalCodeByRecord[$this->recordKey($record)])) {
+                $fiscalCodeByRecord[$this->recordKey($record)] = $fiscalCode;
+            }
+        }
+
+        $h2ByLine = [];
+        foreach ($h2 as $record) {
+            $h2ByLine[(int) $record['__line']] = $record;
+        }
+
+        foreach ($result->issues() as $issue) {
+            $fiscalCode = null;
+            if ($issue->file === 'H1') {
+                $fiscalCode = $h1ByLine[$issue->line] ?? null;
+            } elseif ($issue->file === 'H2' && isset($h2ByLine[$issue->line])) {
+                $fiscalCode = $fiscalCodeByRecord[$this->recordKey($h2ByLine[$issue->line])] ?? null;
+            }
+            $issue->patientFiscalCode = $fiscalCode === '' ? null : $fiscalCode;
+        }
     }
 
     private function validDate(ValidationResult $result, string $file, int $line, FieldDefinition $field, string $value, string $code): bool
@@ -567,20 +624,30 @@ final class FlussiHValidator
 
     private function exactRateTotalCents(string $amount, int $quantity): ?int
     {
+        $totalMills = $this->exactRateTotalMills($amount, $quantity);
+
+        return $totalMills !== null && $totalMills % 10 === 0 ? intdiv($totalMills, 10) : null;
+    }
+
+    private function exactRateTotalMills(string $amount, int $quantity): ?int
+    {
         if (preg_match('/^(\d+),(\d{2})(\d?)$/', $amount, $matches) !== 1) {
             return null;
         }
         $mills = ((int) $matches[1] * 1000)
             + ((int) $matches[2] * 10)
             + ($matches[3] === '' ? 0 : (int) $matches[3]);
-        $totalMills = $mills * $quantity;
-
-        return $totalMills % 10 === 0 ? intdiv($totalMills, 10) : null;
+        return $mills * $quantity;
     }
 
     private function formatCents(int $amount): string
     {
         return number_format($amount / 100, 2, ',', '.');
+    }
+
+    private function formatMills(int $amount): string
+    {
+        return number_format($amount / 1000, 3, ',', '.');
     }
 
     private function inTable(ValidationResult $result, string $file, int $line, FieldDefinition $field, string $value, string $table, string $code): void
@@ -601,9 +668,18 @@ final class FlussiHValidator
         }
     }
 
-    private function fieldIssue(ValidationResult $result, string $file, int $line, string $code, string $message, FieldDefinition $field): void
+    private function fieldIssue(
+        ValidationResult $result,
+        string $file,
+        int $line,
+        string $code,
+        string $message,
+        FieldDefinition $field,
+        ?string $detectedValue = null,
+        ?string $expectedValue = null
+    ): void
     {
         $severity = in_array($code, $this->config['warning_codes'], true) ? 'warning' : 'error';
-        $result->add(new ValidationIssue($file, $line, $code, $message, $field->name, $field->start, $severity));
+        $result->add(new ValidationIssue($file, $line, $code, $message, $field->name, $field->start, $severity, null, $detectedValue, $expectedValue));
     }
 }

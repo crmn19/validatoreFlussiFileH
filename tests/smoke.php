@@ -72,6 +72,8 @@ $valid = $validator->validateContents(h1('01')."\n".h1('99'), h2('01', '000010,0
 assert($valid->isValid(), json_encode($valid, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 $warnings = array_filter($valid->issues(), static function ($i) { return $i->severity === 'warning'; });
 assert(count($warnings) === 3);
+$h2Warning = array_values(array_filter($warnings, static function ($i) { return $i->file === 'H2'; }))[0];
+assert($h2Warning->patientFiscalCode === 'RSSMRA80A01H501U');
 
 $blankOptionalNumeric = $validator->validateContents(
     h1('01')."\n".h1('99'),
@@ -137,30 +139,51 @@ $builtInRateResult = (new FlussiHValidator(['regional_warnings' => false]))->val
 );
 assert($builtInRateResult->isValid(), json_encode($builtInRateResult, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
-$fractionResult = (new FlussiHValidator(['regional_warnings' => false]))->validateContents(
+$quotaDifferenceResult = (new FlussiHValidator(['regional_warnings' => false]))->validateContents(
     h1('01')."\n".h1('99'),
     h2('01', '000118,07', [
+        'tipo_assistenza' => 'NNA',
         'codice_prestazione' => 'NNA.013',
         'importo_compartecipazione' => '000059,04',
         'posizione_compartecipazione' => '1',
     ])."\n".h2('99', '000059,03', [
+        'tipo_assistenza' => 'NNA',
         'codice_prestazione' => 'NNA.013',
         'importo_compartecipazione' => '000059,04',
         'posizione_compartecipazione' => '1',
     ])
 );
-assert(in_array('CENT_FRACTION', array_map(static function ($i) { return $i->code; }, $fractionResult->issues()), true));
+$quotaDifferenceCodes = array_map(static function ($i) { return $i->code; }, $quotaDifferenceResult->issues());
+assert(! in_array('IMPASL', $quotaDifferenceCodes, true));
+assert(! in_array('CENT_FRACTION', $quotaDifferenceCodes, true));
+
+$fractionRateResult = (new FlussiHValidator([
+    'regional_warnings' => false,
+    'service_rules' => ['RIA.001' => ['assistance' => ['CTD'], 'unit_amount' => '000110,625']],
+]))->validateContents(
+    h1('01')."\n".h1('99'),
+    h2('01', '000110,62')."\n".h2('99', '000110,62')
+);
+$fractionRateIssue = array_values(array_filter($fractionRateResult->issues(), static function ($i) { return $i->code === 'CENT_FRACTION'; }))[0];
+assert($fractionRateIssue->detectedValue === '110,62');
+assert($fractionRateIssue->expectedValue === '110,625');
 
 $invalid = $validator->validateContents(substr(h1('01'), 0, -1), h2('01', '000010,00'));
 assert(! $invalid->isValid());
 assert(in_array('RECORD_LENGTH', array_map(static function ($i) { return $i->code; }, $invalid->issues()), true));
 
-$report = (new XlsxReportExporter())->export($valid, 'esempio.h1', 'esempio.h2');
+$report = (new XlsxReportExporter())->export($fractionRateResult, 'esempio.h1', 'esempio.h2');
 $zip = new ZipArchive();
 assert($zip->open($report) === true);
 assert($zip->locateName('xl/worksheets/sheet1.xml') !== false);
 assert($zip->locateName('xl/worksheets/sheet2.xml') !== false);
-assert(strpos((string) $zip->getFromName('xl/worksheets/sheet2.xml'), 'CFMAM') !== false);
+$detailSheet = (string) $zip->getFromName('xl/worksheets/sheet2.xml');
+assert(strpos($detailSheet, 'Codice fiscale paziente') !== false);
+assert(strpos($detailSheet, 'RSSMRA80A01H501U') !== false);
+assert(strpos($detailSheet, 'Rilevato') !== false);
+assert(strpos($detailSheet, 'Previsto') !== false);
+assert(strpos($detailSheet, '110,62') !== false);
+assert(strpos($detailSheet, '110,625') !== false);
 $zip->close();
 unlink($report);
 

@@ -13,6 +13,9 @@ final class ValidationIssue implements JsonSerializable
     public $field;
     public $position;
     public $severity;
+    public $patientFiscalCode;
+    public $detectedValue;
+    public $expectedValue;
 
     public function __construct(
         string $file,
@@ -21,7 +24,10 @@ final class ValidationIssue implements JsonSerializable
         string $message,
         ?string $field = null,
         ?int $position = null,
-        string $severity = 'error'
+        string $severity = 'error',
+        ?string $patientFiscalCode = null,
+        ?string $detectedValue = null,
+        ?string $expectedValue = null
     ) {
         $this->file = $file;
         $this->line = $line;
@@ -30,6 +36,9 @@ final class ValidationIssue implements JsonSerializable
         $this->field = $field;
         $this->position = $position;
         $this->severity = $severity;
+        $this->patientFiscalCode = $patientFiscalCode;
+        $this->detectedValue = $detectedValue;
+        $this->expectedValue = $expectedValue;
     }
 
     /** @return array<string, int|string|null> */
