@@ -20,6 +20,17 @@ final class FlussiHController extends Controller
         );
     }
 
+    public function brandIcon()
+    {
+        return response()->file(
+            dirname(__DIR__, 3).'/resources/assets/software-engine-icon.png',
+            [
+                'Content-Type' => 'image/png',
+                'Cache-Control' => 'public, max-age=604800',
+            ]
+        );
+    }
+
     public function index()
     {
         return view('flussi-h-validator::upload');
