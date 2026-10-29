@@ -43,7 +43,7 @@
         <section class="card">
             <div class="card-head">
                 <div>
-                    <h1>Validatore Flusso H</h1>
+                    <h1>Validatore Flussoi H</h1>
                 </div>
             </div>
 
