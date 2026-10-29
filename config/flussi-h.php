@@ -6,8 +6,10 @@ return [
         'path' => 'validatore/flussi-h',
         'middleware' => ['web'],
         'max_upload_kb' => 51200,
-        /* Layout Blade che ospita l'interfaccia del validatore. */
-        'layout' => 'flussi-h-validator::layouts.standalone',
+        /* null: rileva automaticamente il layout Sileno, se disponibile. */
+        'layout' => null,
+        /* null: usa la modalit&agrave; compatta quando viene rilevato il layout host. */
+        'embedded' => null,
     ],
 
     /* provider, company o region: determina la gestione di OBA/OBR/OBRA. */

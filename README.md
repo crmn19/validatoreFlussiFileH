@@ -166,7 +166,8 @@ Viene creato il file `config/flussi-h.php`. Le impostazioni principali dell'inte
     'path' => 'validatore/flussi-h',
     'middleware' => ['web'],
     'max_upload_kb' => 51200,
-    'layout' => 'flussi-h-validator::layouts.standalone',
+    'layout' => null,
+    'embedded' => null,
 ],
 ```
 
@@ -176,12 +177,14 @@ Per limitare l'accesso agli utenti autenticati:
 'middleware' => ['web', 'auth'],
 ```
 
-Per usare il layout dell'applicazione che ospita il pacchetto, impostare il nome
-della view Blade nel parametro `layout`. La view deve esporre una sezione
-`content`, per esempio:
+Il pacchetto rileva automaticamente `template.page_sidebar_home`, se presente:
+in questo caso usa il layout dell'applicazione host in modalit&agrave; compatta. Per
+forzare un layout diverso, impostare il nome della view Blade nel parametro
+`layout`. La view deve esporre una sezione `content`, per esempio:
 
 ```php
 'layout' => 'template.page_sidebar_home',
+'embedded' => true,
 ```
 
 Per personalizzare la pagina di caricamento:

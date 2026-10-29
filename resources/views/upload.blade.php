@@ -1,4 +1,4 @@
-@extends(config('flussi-h.web.layout', 'flussi-h-validator::layouts.standalone'))
+@extends($layout)
 
 @push('style')
     <style>
@@ -24,12 +24,19 @@
         .flussi-h-validator button { flex: 0 0 auto; padding: 12px 22px; border: 0; border-radius: 5px; color: #fff; background: var(--charcoal); font-size: .94rem; font-weight: 750; cursor: pointer; }
         .flussi-h-validator footer { display: flex; justify-content: center; align-items: center; gap: 9px; margin-top: 24px; color: #718074; font-size: .75rem; }
         .flussi-h-validator .footer-logo img { display: block; width: 125px; height: auto; }
-        @media (max-width:680px) { .flussi-h-validator main { margin: 26px auto; } .flussi-h-validator .grid { grid-template-columns: 1fr; } .flussi-h-validator .actions { align-items: stretch; flex-direction: column; } .flussi-h-validator .actions button { width: 100%; } .flussi-h-validator form, .flussi-h-validator .card-head { padding: 22px; } .flussi-h-validator .errors { margin: 0 22px; } }
+        .flussi-h-validator--embedded main { width: 100%; margin: 0; }
+        .flussi-h-validator--embedded h1 { margin: 6px 0 20px; font-size: 2rem; }
+        .flussi-h-validator--embedded .card { box-shadow: none; }
+        .flussi-h-validator--embedded .card-head { padding: 16px 20px; }
+        .flussi-h-validator--embedded form { padding: 20px; }
+        .flussi-h-validator--embedded .upload { min-height: 140px; padding: 18px; }
+        .flussi-h-validator--embedded footer { margin-top: 14px; }
+        @media (max-width:680px) { .flussi-h-validator main { margin: 26px auto; } .flussi-h-validator--embedded main { margin: 0; } .flussi-h-validator .grid { grid-template-columns: 1fr; } .flussi-h-validator .actions { align-items: stretch; flex-direction: column; } .flussi-h-validator .actions button { width: 100%; } .flussi-h-validator form, .flussi-h-validator .card-head { padding: 22px; } .flussi-h-validator--embedded form, .flussi-h-validator--embedded .card-head { padding: 18px; } .flussi-h-validator .errors { margin: 0 22px; } }
     </style>
 @endpush
 
 @section('content')
-    <div class="flussi-h-validator">
+    <div class="flussi-h-validator {{ $embedded ? 'flussi-h-validator--embedded' : '' }}">
     <main>
         <div class="eyebrow">Regione Campania · Assistenza riabilitativa</div>
         <h1>Validatore Flusso H</h1>

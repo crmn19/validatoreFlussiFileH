@@ -33,7 +33,15 @@ final class FlussiHController extends Controller
 
     public function index()
     {
-        return view('flussi-h-validator::upload');
+        $silenoLayout = 'template.page_sidebar_home';
+        $layout = config('flussi-h.web.layout')
+            ?: (view()->exists($silenoLayout) ? $silenoLayout : 'flussi-h-validator::layouts.standalone');
+        $embedded = config('flussi-h.web.embedded');
+
+        return view('flussi-h-validator::upload', [
+            'layout' => $layout,
+            'embedded' => $embedded === null ? $layout === $silenoLayout : (bool) $embedded,
+        ]);
     }
 
     public function validateFiles(Request $request, FlussiHValidator $validator, XlsxReportExporter $exporter)
