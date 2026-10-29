@@ -2,22 +2,22 @@
 
 @push('style')
     <style>
-        .flussi-h-validator { --charcoal: #3f484a; --paper: #fff; --ink: #252b2d; --muted: #687174; --line: #d9ddde; --error: #9a2d2d; color: var(--ink); }
+        .flussi-h-validator { --charcoal: #4C184E; --paper: #fff; --ink: #252b2d; --muted: #6c5a6d; --line: #4C184E; --error: #9a2d2d; color: var(--ink); }
         .flussi-h-validator main { width: min(900px, calc(100% - 32px)); margin: 48px auto; }
         .flussi-h-validator .eyebrow { color: var(--muted); font-size: .76rem; font-weight: 700; letter-spacing: .11em; text-transform: uppercase; }
-        .flussi-h-validator h1 { margin: 10px 0 28px; color: var(--charcoal); font-size: clamp(2rem, 5vw, 3rem); font-weight: 650; letter-spacing: -.03em; }
-        .flussi-h-validator .notice { margin: -12px 0 20px; padding: 12px 15px; border-left: 4px solid #d8a239; border-radius: 4px; color: #645126; background: #fff8e9; font-size: .86rem; line-height: 1.5; }
+        .flussi-h-validator .notice { margin: -12px 0 20px; padding: 12px 15px; border-left: 4px solid #4C184E; border-radius: 4px; color: #4C184E; font-size: .86rem; line-height: 1.5; }
+        .flussi-h-validator .actions .notice { margin: 10px 0 0; }
         .flussi-h-validator .card { overflow: hidden; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); box-shadow: 0 8px 24px rgba(31, 40, 42, .06); }
         .flussi-h-validator .card-head { display: flex; gap: 18px; align-items: center; padding: 24px 28px; border-bottom: 1px solid var(--line); }
-        .flussi-h-validator .badge { display: grid; width: 46px; height: 46px; flex: 0 0 auto; place-items: center; border-radius: 6px; color: #fff; background: var(--charcoal); font-weight: 800; }
-        .flussi-h-validator .card-head h2 { margin: 0; font-size: 1.14rem; }
+        .flussi-h-validator .card-head h1 { margin: 0; color: var(--charcoal); font-size: 1.3rem; font-weight: 650; }
         .flussi-h-validator form { padding: 28px; }
         .flussi-h-validator .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-        .flussi-h-validator .upload { position: relative; min-height: 175px; padding: 22px; border: 1px dashed #aeb5b7; border-radius: 6px; background: #fafafa; transition: .15s ease; }
-        .flussi-h-validator .upload:hover, .flussi-h-validator .upload:focus-within { border-color: #687174; background: #f5f6f6; }
+        .flussi-h-validator .upload { position: relative; min-height: 175px; padding: 22px; border: 1px dashed #4C184E; border-radius: 6px; background: #fafafa; transition: .15s ease; }
+        .flussi-h-validator .upload:hover, .flussi-h-validator .upload:focus-within { border-color: #4C184E; background: #f5f6f6; }
         .flussi-h-validator .upload strong { display: block; margin-bottom: 7px; color: var(--charcoal); font-size: 1rem; }
         .flussi-h-validator .upload small { display: block; margin-bottom: 20px; color: var(--muted); line-height: 1.5; }
         .flussi-h-validator input[type=file] { width: 100%; color: var(--muted); font-size: .86rem; }
+        .flussi-h-validator input[type=file]::file-selector-button { margin-right: 10px; padding: 8px 12px; border: 1px solid #4C184E; border-radius: 4px; color: #fff; background: #4C184E; font-weight: 700; cursor: pointer; }
         .flussi-h-validator .errors { margin: 0 28px; padding: 15px 18px; border-left: 4px solid var(--error); border-radius: 8px; color: #7e2020; background: #fff0f0; }
         .flussi-h-validator .actions { display: flex; justify-content: space-between; gap: 20px; align-items: center; margin-top: 25px; }
         .flussi-h-validator .options { display: flex; align-items: flex-start; gap: 9px; margin-top: 20px; color: var(--muted); font-size: .86rem; }
@@ -25,9 +25,8 @@
         .flussi-h-validator button { flex: 0 0 auto; padding: 12px 22px; border: 0; border-radius: 5px; color: #fff; background: var(--charcoal); font-size: .94rem; font-weight: 750; cursor: pointer; }
         .flussi-h-validator footer { display: flex; justify-content: center; align-items: center; gap: 9px; margin-top: 24px; color: #718074; font-size: .75rem; }
         .flussi-h-validator .footer-logo img { display: block; width: 125px; height: auto; }
+        .flussi-h-validator--embedded { margin-top: -30px; }
         .flussi-h-validator--embedded main { width: 100%; margin: 0; }
-        .flussi-h-validator--embedded h1 { margin: 6px 0 20px; font-size: 2rem; }
-        .flussi-h-validator--embedded .notice { margin-top: -8px; }
         .flussi-h-validator--embedded .card { box-shadow: none; }
         .flussi-h-validator--embedded .card-head { padding: 16px 20px; }
         .flussi-h-validator--embedded form { padding: 20px; }
@@ -40,20 +39,10 @@
 @section('content')
     <div class="flussi-h-validator {{ $embedded ? 'flussi-h-validator--embedded' : '' }}">
     <main>
-        <h1>Validatore Flusso H</h1>
-
-        <div class="notice" role="alert">
-            <strong>ATTENZIONE.</strong> Il controllo &egrave; di supporto e potrebbe non intercettare tutte le
-            anomalie o gli aggiornamenti delle specifiche regionali. L'esito non sostituisce la validazione
-            ufficiale del flusso.
-        </div>
-
-
         <section class="card">
             <div class="card-head">
-                <div class="badge">H</div>
                 <div>
-                    <h2>Nuova validazione</h2>
+                    <h1>Validatore Flusso H</h1>
                 </div>
             </div>
 
@@ -88,8 +77,15 @@
                         i soli errori gravi.</span>
                 </label>
                 <div class="actions">
-                    <div class="privacy">I file vengono elaborati durante la richiesta e non sono archiviati dal
-                        software.</div>
+                    <div>
+                        <div class="privacy">I file vengono elaborati durante la richiesta e non sono archiviati dal
+                            software.</div>
+                        <div class="notice" role="alert">
+                            <strong>ATTENZIONE.</strong> Il controllo &egrave; di supporto e potrebbe non intercettare tutte
+                            le anomalie o gli aggiornamenti delle specifiche regionali. L'esito non sostituisce la
+                            validazione ufficiale del flusso.
+                        </div>
+                    </div>
                     <button type="submit">Valida</button>
                 </div>
             </form>

@@ -9,7 +9,7 @@
     @stack('style')
     <style>
         body { margin: 0; min-height: 100vh; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f4f5f5; }
-        body::before { content: ''; display: block; height: 5px; background: #3f484a; }
+        body::before { content: ''; display: block; height: 5px; background: #4C184E; }
     </style>
 </head>
 <body>
