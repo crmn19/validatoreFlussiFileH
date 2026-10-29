@@ -6,6 +6,7 @@
         .flussi-h-validator main { width: min(900px, calc(100% - 32px)); margin: 48px auto; }
         .flussi-h-validator .eyebrow { color: var(--muted); font-size: .76rem; font-weight: 700; letter-spacing: .11em; text-transform: uppercase; }
         .flussi-h-validator h1 { margin: 10px 0 28px; color: var(--charcoal); font-size: clamp(2rem, 5vw, 3rem); font-weight: 650; letter-spacing: -.03em; }
+        .flussi-h-validator .notice { margin: -12px 0 20px; padding: 12px 15px; border-left: 4px solid #d8a239; border-radius: 4px; color: #645126; background: #fff8e9; font-size: .86rem; line-height: 1.5; }
         .flussi-h-validator .card { overflow: hidden; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); box-shadow: 0 8px 24px rgba(31, 40, 42, .06); }
         .flussi-h-validator .card-head { display: flex; gap: 18px; align-items: center; padding: 24px 28px; border-bottom: 1px solid var(--line); }
         .flussi-h-validator .badge { display: grid; width: 46px; height: 46px; flex: 0 0 auto; place-items: center; border-radius: 6px; color: #fff; background: var(--charcoal); font-weight: 800; }
@@ -26,6 +27,7 @@
         .flussi-h-validator .footer-logo img { display: block; width: 125px; height: auto; }
         .flussi-h-validator--embedded main { width: 100%; margin: 0; }
         .flussi-h-validator--embedded h1 { margin: 6px 0 20px; font-size: 2rem; }
+        .flussi-h-validator--embedded .notice { margin-top: -8px; }
         .flussi-h-validator--embedded .card { box-shadow: none; }
         .flussi-h-validator--embedded .card-head { padding: 16px 20px; }
         .flussi-h-validator--embedded form { padding: 20px; }
@@ -38,9 +40,13 @@
 @section('content')
     <div class="flussi-h-validator {{ $embedded ? 'flussi-h-validator--embedded' : '' }}">
     <main>
-        <div class="eyebrow">Regione Campania · Assistenza riabilitativa</div>
         <h1>Validatore Flusso H</h1>
 
+        <div class="notice" role="alert">
+            <strong>ATTENZIONE.</strong> Il controllo &egrave; di supporto e potrebbe non intercettare tutte le
+            anomalie o gli aggiornamenti delle specifiche regionali. L'esito non sostituisce la validazione
+            ufficiale del flusso.
+        </div>
 
 
         <section class="card">
