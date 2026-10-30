@@ -35,14 +35,7 @@
         .flussi-h-validator button { flex: 0 0 auto; padding: 12px 22px; border: 0; border-radius: 5px; color: #fff; background: var(--charcoal); font-size: .94rem; font-weight: 750; cursor: pointer; }
         .flussi-h-validator footer { display: flex; justify-content: center; align-items: center; gap: 9px; margin-top: 24px; color: #718074; font-size: .75rem; }
         .flussi-h-validator .footer-logo img { display: block; width: 125px; height: auto; }
-        .flussi-h-validator--embedded { margin-top: 10px; }
-        .flussi-h-validator--embedded main { width: 100%; margin: 0; padding: 28px; }
-        .flussi-h-validator--embedded .card { box-shadow: none; }
-        .flussi-h-validator--embedded .card-head { padding: 16px 20px; }
-        .flussi-h-validator--embedded form { padding: 20px; }
-        .flussi-h-validator--embedded .upload { min-height: 225px; padding: 18px; }
-        .flussi-h-validator--embedded footer { margin-top: 14px; }
-        @media (max-width:680px) { .flussi-h-validator main { margin: 26px auto; padding: 20px; } .flussi-h-validator--embedded main { margin: 0; padding: 16px; } .flussi-h-validator .grid { grid-template-columns: 1fr; } .flussi-h-validator .actions { align-items: stretch; flex-direction: column; } .flussi-h-validator .actions button { width: 100%; } .flussi-h-validator form, .flussi-h-validator .card-head { padding: 22px; } .flussi-h-validator--embedded form, .flussi-h-validator--embedded .card-head { padding: 18px; } .flussi-h-validator .errors { margin: 0 22px; } }
+        @media (max-width:680px) { .flussi-h-validator main { margin: 26px auto; padding: 20px; } .flussi-h-validator .grid { grid-template-columns: 1fr; } .flussi-h-validator .actions { align-items: stretch; flex-direction: column; } .flussi-h-validator .actions button { width: 100%; } .flussi-h-validator form, .flussi-h-validator .card-head { padding: 22px; } .flussi-h-validator .errors { margin: 0 22px; } }
     </style>
 @endpush
 
