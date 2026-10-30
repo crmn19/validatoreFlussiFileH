@@ -16,7 +16,7 @@
         .flussi-h-validator .required-files { flex: 0 0 auto; color: var(--muted); font-size: .82em; }
         .flussi-h-validator form { padding: 30px; }
         .flussi-h-validator .upload-step { display: flex; justify-content: space-between; align-items: center; gap: 18px; margin: 0 0 22px; }
-        .flussi-h-validator .upload-step-title { display: flex; min-width: 0; align-items: center; gap: 14px; color: var(--ink); font-size: 1.12em; font-weight: 700; }
+        .flussi-h-validator .upload-step-title { display: flex; min-width: 0; align-items: center; gap: 14px; color: var(--ink); font-size: 1em; font-weight: 700; }
         .flussi-h-validator .step-number { display: inline-flex; width: 42px; height: 42px; flex: 0 0 auto; justify-content: center; align-items: center; border-radius: 50%; color: #fff; background: var(--charcoal); font-size: .94em; font-weight: 700; }
         .flussi-h-validator .file-count { flex: 0 0 auto; padding: 8px 14px; border-radius: 999px; color: #526276; background: #f1f5f9; font-size: .84em; font-weight: 650; }
         .flussi-h-validator .validator-layout { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 20px; align-items: start; }
@@ -86,6 +86,7 @@
         .flussi-h-validator .aside-note-icon { width: 21px; height: 21px; flex: 0 0 auto; margin-top: 1px; color: var(--charcoal); }
         .flussi-h-validator .aside-note-copy { min-width: 0; }
         .flussi-h-validator .aside-note-title { display: block; margin-bottom: 4px; color: var(--charcoal); font-size: 1em; }
+        .flussi-h-validator .support-note { margin-top: 16px; }
         .flussi-h-validator button { display: inline-flex; min-width: 250px; min-height: 56px; box-sizing: border-box; flex: 0 0 auto; justify-content: center; align-items: center; gap: 10px; padding: 15px 26px; border: 0; border-radius: 8px; color: #fff; background: var(--charcoal); box-shadow: 0 5px 14px rgba(76, 24, 78, .22); font-size: 1.05em; font-weight: 750; cursor: pointer; transition: box-shadow .15s ease, transform .15s ease; }
         .flussi-h-validator button:hover { box-shadow: 0 7px 18px rgba(76, 24, 78, .28); transform: translateY(-1px); }
         .flussi-h-validator button:active { box-shadow: 0 3px 8px rgba(76, 24, 78, .2); transform: translateY(0); }
@@ -97,7 +98,8 @@
         .flussi-h-validator footer { display: flex; justify-content: center; align-items: center; gap: 9px; margin-top: 24px; color: #718074; font-size: .75em; }
         .flussi-h-validator .footer-logo img { display: block; width: 125px; height: auto; }
         .flussi-h-validator--embedded { margin-top: 0; }
-        .flussi-h-validator--embedded { font-size: 17px; }
+        .flussi-h-validator--embedded { font-size: 15px; }
+        .flussi-h-validator--embedded .card-head h2 { font-size: 1.8em; }
         .flussi-h-validator--embedded main { width: 100%; margin: 0; padding: 40px; }
         .flussi-h-validator--embedded .page-intro { width: min(1400px, calc(100% - 32px)); margin-right: auto; margin-left: auto; }
         .flussi-h-validator--embedded .card { width: min(1400px, calc(100% - 32px)); margin: 0 auto; box-sizing: border-box; }
@@ -182,6 +184,10 @@
                         <span><strong>Includi gli avvertimenti non bloccanti</strong><br>Lascia deselezionato per ottenere un report con i soli errori gravi.</span>
                     </label>
                 </section>
+                <div class="aside-note support-note" role="note">
+                    <svg class="aside-note-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="8"/><path d="M10 5.8v5"/><path d="M10 14.5h.01"/></svg>
+                    <span class="aside-note-copy"><strong class="aside-note-title">Controllo di supporto</strong>Potrebbe non intercettare tutte le anomalie o gli aggiornamenti delle specifiche regionali. L'esito non sostituisce la validazione ufficiale del flusso.</span>
+                </div>
                 </div>
                 <aside class="validator-aside" aria-label="Riepilogo e informazioni">
                     <section class="summary-card" aria-labelledby="summary-title">
@@ -213,10 +219,6 @@
                     <div class="aside-note" role="note">
                         <svg class="aside-note-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2.2 16 4.4v4.4c0 4-2.5 7.1-6 9-3.5-1.9-6-5-6-9V4.4l6-2.2Z"/></svg>
                         <span class="aside-note-copy">I file vengono elaborati durante la richiesta e non sono archiviati dal software.</span>
-                    </div>
-                    <div class="aside-note" role="note">
-                        <svg class="aside-note-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="8"/><path d="M10 5.8v5"/><path d="M10 14.5h.01"/></svg>
-                        <span class="aside-note-copy"><strong class="aside-note-title">Controllo di supporto</strong>Potrebbe non intercettare tutte le anomalie o gli aggiornamenti delle specifiche regionali. L'esito non sostituisce la validazione ufficiale del flusso.</span>
                     </div>
                 </aside>
                 </div>
