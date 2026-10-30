@@ -100,12 +100,21 @@
         .flussi-h-validator--embedded { margin-top: 0; }
         .flussi-h-validator--embedded { font-size: 15px; }
         .flussi-h-validator--embedded .card-head h2 { font-size: 1.8em; }
-        .flussi-h-validator--embedded main { width: 100%; margin: 0; padding: 40px; }
+        .flussi-h-validator--embedded main { width: 100%; margin: 0; padding: 32px; }
+        .flussi-h-validator--embedded form { padding: 24px; }
+        .flussi-h-validator--embedded .card-head { padding: 14px 24px; }
+        .flussi-h-validator--embedded .upload { min-height: 240px; padding: 18px; }
+        .flussi-h-validator--embedded .upload-step { margin-bottom: 16px; }
+        .flussi-h-validator--embedded .upload-content { padding-top: 14px; }
+        .flussi-h-validator--embedded .options-section { padding: 15px 18px 18px; }
+        .flussi-h-validator--embedded .options { padding: 11px 13px; }
+        .flussi-h-validator--embedded .support-note { margin-top: 12px; padding: 10px 12px; }
         .flussi-h-validator--embedded .page-intro { width: min(1400px, calc(100% - 32px)); margin-right: auto; margin-left: auto; }
         .flussi-h-validator--embedded .card { width: min(1400px, calc(100% - 32px)); margin: 0 auto; box-sizing: border-box; }
         @media (max-width:980px) { .flussi-h-validator .validator-layout { grid-template-columns: 1fr; } .flussi-h-validator .validator-aside { margin-top: 0; } .flussi-h-validator .options-section { margin-top: 24px; } }
         @media (max-width:680px) { .flussi-h-validator main { margin: 26px auto; padding: 20px; } .flussi-h-validator--embedded main { margin: 0; padding: 20px; } .flussi-h-validator--embedded .page-intro, .flussi-h-validator--embedded .card { width: 100%; } .flussi-h-validator .page-intro h1 { font-size: 1.85em; } .flussi-h-validator .card-head h2 { font-size: 1.85em; } .flussi-h-validator .validator-aside, .flussi-h-validator .grid { grid-template-columns: 1fr; } .flussi-h-validator .upload { min-height: 220px; } .flussi-h-validator .upload-step { align-items: flex-start; } .flussi-h-validator .upload-step-title { gap: 10px; font-size: 1em; } .flussi-h-validator .step-number { width: 36px; height: 36px; } .flussi-h-validator .file-count { padding: 7px 10px; font-size: .76em; } .flussi-h-validator .actions { align-items: stretch; flex-direction: column; } .flussi-h-validator .actions button { width: 100%; min-width: 0; } .flussi-h-validator form, .flussi-h-validator .card-head { padding: 22px; } .flussi-h-validator .card-head { align-items: flex-start; flex-direction: column; gap: 5px; } .flussi-h-validator .errors { margin: 0 22px; } }
         @media (max-width:430px) { .flussi-h-validator .upload-step { flex-wrap: wrap; } .flussi-h-validator .file-count { margin-left: 46px; } .flussi-h-validator .upload { padding: 17px; } }
+        @media (max-width:680px) { .flussi-h-validator--embedded form { padding: 18px; } .flussi-h-validator--embedded .card-head { padding: 14px 18px; } .flussi-h-validator--embedded .upload { min-height: 220px; padding: 16px; } }
     </style>
 @endpush
 
